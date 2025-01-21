@@ -3,16 +3,16 @@
 ######    Marion Talbi - 10th of January   ######
 #################################################
 setwd("~/workshop_materials/21_recombination_estimation")
-library(dplyr)
 
 #################################################
+#Load the data
 maps_Ben_bp15<-read.table("./pyrho/output_files/LS420024.2_benthic_bp15_pyrho.optimize",col.names = c("start","end","rate"))
 maps_Lit_bp15<-read.table("./pyrho/output_files/LS420024.2_littoral_bp15_pyrho.optimize",col.names = c("start","end","rate"))
 maps_Ben_bp30<-read.table("./pyrho/output_files/LS420024.2_benthic_bp30_pyrho.optimize",col.names = c("start","end","rate"))
 maps_Lit_bp30<-read.table("./pyrho/output_files/LS420024.2_littoral_bp30_pyrho.optimize",col.names = c("start","end","rate"))
 
 #################################################
-#####1.  Converting r in cM / Mb
+#####1.  To convert r in cM / Mb
 
 maps_Ben_bp15$"cM/Mb"<-(maps_Ben_bp15$rate/0.01)*10^6
 maps_Lit_bp15$"cM/Mb"<-(maps_Lit_bp15$rate/0.01)*10^6
@@ -21,7 +21,7 @@ maps_Lit_bp15$"cM/Mb"<-(maps_Lit_bp15$rate/0.01)*10^6
 plot(y=maps_Ben_bp15$`cM/Mb`,x=(maps_Ben_bp15$start+maps_Ben_bp15$end)/2,type="l",lwd=1.5,col="steelblue4",ylim=c(0,(y_lim_max/0.01)*10^6),main="benthic - bp 15",ylab="r")
 
 #################################################
-##### Obtaining the recombination map length
+##### To obtain the recombination map length
 right_snp=5806
 left_snp=2539
 rec_rate_in_cM=0.455158616243
@@ -30,9 +30,9 @@ new_map_length=map_length+((right_snp-left_snp)*rec_rate_in_cM/10^6)
 new_map_length
 
 #################################################
-#####2.  Diplaying recombination landscape
+#####2.  To plot recombination landscapes
 par(mfrow=c(2,1))
-y_lim_max=1e-06
+y_lim_max=1e-06 #You can change this value
 
 ##Benthic
 plot(y=maps_Ben_bp15$rate,x=(maps_Ben_bp15$start+maps_Ben_bp15$end)/2,type="l",lwd=1.5,col="steelblue4",xlab="Genomic position",ylim=c(0,y_lim_max),main="benthic - bp 15",ylab="r")
@@ -68,8 +68,3 @@ plot(SubData_ecdf_Lit_bp15$cum_sum/max(SubData_ecdf_Lit_bp15$cum_sum),SubData_ec
      type='l',col="gold",lwd=2,lty=1,cex=2,xlab="Proportion of the Genome",ylab="Proportion of recombination event",main="Cumulative curve")
 lines(SubData_ecdf_Ben_bp15$cum_sum/max(SubData_ecdf_Ben_bp15$cum_sum),SubData_ecdf_Ben_bp15$cum_sum_pond/max(SubData_ecdf_Ben_bp15$cum_sum_pond,na.rm=T),col="steelblue",type='l',lwd=2,lty=1,cex=2)
 
-##With dplyr:
-#ecdf_Lit_bp15<-maps_Lit_bp15 %>% mutate(.,Rate_pond=(rate)*((end-start))) %>% arrange(., desc(rate)) %>% 
-#  mutate(.,cum_sum=cumsum(end-start),cum_sum_pond=cumsum(Rate_pond))
-#ecdf_Ben_bp15<-maps_Ben_bp15 %>% mutate(.,Rate_pond=(rate)*((end-start))) %>% arrange(., desc(rate)) %>% 
-#  mutate(.,cum_sum=cumsum(end-start),cum_sum_pond=cumsum(Rate_pond))
